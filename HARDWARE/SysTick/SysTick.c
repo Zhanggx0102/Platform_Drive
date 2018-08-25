@@ -42,6 +42,11 @@ extern float Right_RPM;
 extern int16_t Right_Direction;
 extern volatile PID_Increment_Struct Right_Motor_PID;
 
+extern float Left_Angular_Velocity;
+extern float Left_RPM;
+extern int16_t Left_Direction;
+extern volatile PID_Increment_Struct Left_Motor_PID;
+
 extern volatile u16 USART1_RX_BUF; 
 
 extern float a , b;
@@ -80,10 +85,9 @@ void SysTick_Handler()
 {	
 	//read the encoder
 	Encoders_Read();
-	//Velocity_Now = Right_RPM;
-	PID_Controller((float)USART1_RX_BUF,Right_RPM);
-	//a = (float)USART1_RX_BUF;
-	//b = Right_RPM;
-	//a++;
+	//PID control
+	//PID_Controller_Right((float)USART1_RX_BUF,Right_RPM);
+	PID_Controller_Left((float)USART1_RX_BUF,Left_RPM);
+	
 }
 

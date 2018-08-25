@@ -56,9 +56,10 @@ typedef struct
 
 /* Functions ---------------------------------------------------------------- */
 
-void Increment_PID_Mode(volatile PID_Increment_Struct* Increment_PID);
-
-void PID_Controller(float Target_Velocity, float Actual_Velocity);
+void Increment_PID_Mode_Right(volatile PID_Increment_Struct* Increment_PID);
+void Increment_PID_Mode_Left(volatile PID_Increment_Struct* Increment_PID);
+void PID_Controller_Right(float Target_Velocity, float Actual_Velocity);
+void PID_Controller_Left(float Target_Velocity, float Actual_Velocity);
 
 #endif
 

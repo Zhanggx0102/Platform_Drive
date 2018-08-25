@@ -112,7 +112,7 @@ void USART1_IRQHandler(void)
 	{
 		USART1_RX_FLAG=1;
 		USART1_RX_BUF = USART_ReceiveData(USART1);
-		Motor_PWM_Creater((float)USART1_RX_BUF,Foreward_PWM);
+		Motor_PWM_Creater(0, 0, (float)USART1_RX_BUF, Foreward_PWM);
 	}
 	//USART_SendData(USART1, res);
 	

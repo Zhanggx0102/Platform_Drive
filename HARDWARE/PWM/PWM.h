@@ -40,9 +40,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE
 /* Functions ---------------------------------------------------------------- */
 void TIM10_PWM_Init(u32 arr,u32 psc);
 void TIM10_PWM_SetDuty(u32 ratio);
+void TIM11_PWM_Init(u32 arr,u32 psc);
+void TIM11_PWM_SetDuty(u32 ratio);
 void Motor_Control_Init(void);
-int Motor_State_Control(u8 signal);
-void Motor_PWM_Creater (float Target_Velocity, u8 signal);
+int Motor_State_Control(u8 signal_right, u8 signal_left);
+void Motor_PWM_Creater (float Target_Velocity_R, u8 signal_R, float Target_Velocity_L, u8 signal_L);
 
 
 #endif

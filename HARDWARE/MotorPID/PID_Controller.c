@@ -35,11 +35,22 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE
 
 /* Variable ----------------------------------------------------------------- */
 volatile PID_Increment_Struct Right_Motor_PID;
+volatile PID_Increment_Struct Left_Motor_PID;
 
 volatile float a , b;//debug
-
 /* Functions ---------------------------------------------------------------- */
-void Increment_PID_Mode(volatile PID_Increment_Struct* Increment_PID)
+/*******************************************************************************
+* Function Name  : --Increment_PID_Mode_Right
+* Description    : --PID control for right motor by  increment  mode
+									 --
+									 --
+									 --
+* Input          : --PID_Increment_Struct
+* Output         : --new PWM duty
+* Return         : --NULL
+*******************************************************************************/
+/* Functions ---------------------------------------------------------------- */
+void Increment_PID_Mode_Right(volatile PID_Increment_Struct* Increment_PID)
 {
 	float Err, dErr, ddErr, dErrP, dErrI, dErrD;
 	
@@ -79,10 +90,66 @@ void Increment_PID_Mode(volatile PID_Increment_Struct* Increment_PID)
 
 	//set the new PWM duty
 	TIM10_PWM_SetDuty((int)Increment_PID->PWM_Out);
-	
 }
+/*******************************************************************************
+* Function Name  : --Increment_PID_Mode_Left
+* Description    : --PID control for left motor by  increment  mode
+									 --
+									 --
+									 --
+* Input          : --PID_Increment_Struct
+* Output         : --new PWM duty
+* Return         : --NULL
+*******************************************************************************/
+/* Functions ---------------------------------------------------------------- */
+void Increment_PID_Mode_Left(volatile PID_Increment_Struct* Increment_PID)
+{
+	float Err, dErr, ddErr, dErrP, dErrI, dErrD;
+	
+	Err = Increment_PID->Now_err;
+	dErr = Increment_PID->Now_err - Increment_PID->Pre_err;
+	ddErr = Increment_PID->Pre_err - Increment_PID->Pre_Pre_err;
+	//update the errors
+	Increment_PID->Pre_Pre_err = Increment_PID->Pre_err;
+	Increment_PID->Pre_err = Increment_PID->Now_err;
+	
+	dErrP = dErr;
+	dErrI = Err;
+	dErrD = Err - 2*dErr + ddErr;
 
-void PID_Controller(float Target_Velocity, float Actual_Velocity)
+
+	Increment_PID->PWM_Increment_Out = Increment_PID->Kp*dErrP + Increment_PID->Ki*dErrI + Increment_PID->Kd*dErrD;
+	//smooth the PWM_Increment_Out
+	if(Increment_PID->PWM_Increment_Out <= -40)
+	{
+		Increment_PID->PWM_Increment_Out = -40;
+	}
+	
+	Increment_PID->PWM_Out = Increment_PID->PWM_Out + Increment_PID->PWM_Increment_Out;
+	//limit the output rang
+	if(Increment_PID->PWM_Out>2100)
+	{
+		Increment_PID->PWM_Out = 2100;
+	}
+	else if(Increment_PID->PWM_Out < 0)
+	{
+		Increment_PID->PWM_Out = 0;
+	}
+
+	//set the new PWM duty
+	TIM11_PWM_SetDuty((int)Increment_PID->PWM_Out);
+}
+/*******************************************************************************
+* Function Name  : --PID_Controller_Right
+* Description    : --Set right PID control parameters
+									 --
+									 --
+									 --
+* Input          : --Target_Velocity and Actual_Velocity
+* Output         : --NULL
+* Return         : --NULL
+*******************************************************************************/
+void PID_Controller_Right(float Target_Velocity, float Actual_Velocity)
 { 
 	Right_Motor_PID.Now_err = Target_Velocity - Actual_Velocity;
 	
@@ -90,10 +157,29 @@ void PID_Controller(float Target_Velocity, float Actual_Velocity)
 	Right_Motor_PID.Ki = 1;
 	Right_Motor_PID.Kd = 1;
 	
-	Increment_PID_Mode(&Right_Motor_PID);
+	Increment_PID_Mode_Right(&Right_Motor_PID);
 }
 
-
+/*******************************************************************************
+* Function Name  : --PID_Controller_Right
+* Description    : --Set right PID control parameters
+									 --
+									 --
+									 --
+* Input          : --Target_Velocity and Actual_Velocity
+* Output         : --NULL
+* Return         : --NULL
+*******************************************************************************/
+void PID_Controller_Left(float Target_Velocity, float Actual_Velocity)
+{ 
+	Left_Motor_PID.Now_err = Target_Velocity - Actual_Velocity;
+	
+	Left_Motor_PID.Kp = 5;
+	Left_Motor_PID.Ki = 1;
+	Left_Motor_PID.Kd = 1;
+	
+	Increment_PID_Mode_Left(&Left_Motor_PID);
+}
 
 
 

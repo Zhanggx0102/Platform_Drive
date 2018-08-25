@@ -50,6 +50,11 @@ volatile u16 USART1_RX_BUF; //串口接收数据保存
 extern float Right_Angular_Velocity;
 extern float Right_RPM;
 extern int16_t Right_Direction;
+
+extern float Left_Angular_Velocity;
+extern float Left_RPM;
+extern int16_t Left_Direction;
+
 static u16 Led_Flag;
 
 extern float a , b;
@@ -69,6 +74,7 @@ int main(void)
 	LED_Init();
 	Usart1_Init(9600);
 	TIM10_PWM_Init(2100-1,4-1);
+	TIM11_PWM_Init(2100-1,4-1);
 	Motor_Control_Init();
 	Encoders_Init();
 	SysTick_Init();
@@ -89,7 +95,7 @@ int main(void)
 		Delay_ms(200);
 		if(USART1_RX_FLAG ==1)
 		{
-		printf("Speed: %d %f %f %d %f %f \n",USART1_RX_BUF, a,b,Right_Direction,Right_RPM,Right_Angular_Velocity);
+		printf("Speed: %d %d %f %f \n",USART1_RX_BUF, Left_Direction, Left_RPM, Left_Angular_Velocity);
 		}
 		
 	}

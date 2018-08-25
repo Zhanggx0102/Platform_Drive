@@ -40,39 +40,39 @@ void Delay_Init(void)
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStructure;
 	NVIC_InitTypeDef NVIC_InitStructure;
 	
-	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3,ENABLE); 
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2,ENABLE); 
 	
 	TIM_TimeBaseInitStructure.TIM_Period = 10-1; //set auto reload value as 10 (1 ms)
 	TIM_TimeBaseInitStructure.TIM_Prescaler=8400-1; //set division factor as 8400, clock = 84M/8400 = 10K Hz
 	TIM_TimeBaseInitStructure.TIM_CounterMode=TIM_CounterMode_Up; 
 	TIM_TimeBaseInitStructure.TIM_ClockDivision=TIM_CKD_DIV1;
-	TIM_TimeBaseInit(TIM3,&TIM_TimeBaseInitStructure);
-	TIM_ITConfig(TIM3,TIM_IT_Update,ENABLE); 
+	TIM_TimeBaseInit(TIM2,&TIM_TimeBaseInitStructure);
+	TIM_ITConfig(TIM2,TIM_IT_Update,ENABLE); 
 	
-	NVIC_InitStructure.NVIC_IRQChannel=TIM3_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannel=TIM2_IRQn;
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority=0x01; 
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority=0x03; 
 	NVIC_InitStructure.NVIC_IRQChannelCmd=ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
 	
-	TIM_Cmd(TIM3,DISABLE); 
+	TIM_Cmd(TIM2,DISABLE); 
 }
 
-void TIM3_IRQHandler(void)
+void TIM2_IRQHandler(void)
 {
-	if(TIM_GetITStatus(TIM3,TIM_IT_Update)==SET) 
+	if(TIM_GetITStatus(TIM2,TIM_IT_Update)==SET) 
 	{
 		gTimer--;
 	}
-	TIM_ClearITPendingBit(TIM3,TIM_IT_Update);
+	TIM_ClearITPendingBit(TIM2,TIM_IT_Update);
 }
 
 void Delay_ms(u16 nms)
 {
 	gTimer = nms;
-	TIM_Cmd(TIM3,ENABLE); 
+	TIM_Cmd(TIM2,ENABLE); 
 	while(gTimer);
-	TIM_Cmd(TIM3,DISABLE); 
+	TIM_Cmd(TIM2,DISABLE); 
 }
 
 
